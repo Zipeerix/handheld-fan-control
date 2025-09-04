@@ -1,0 +1,7 @@
+conan >= 2.12
+black
+cmake-format
+clang-tidy
+prettier
+autopep8
+yamlfmt

@@ -1,10 +1,18 @@
 {
-  "name": "Example Plugin",
-  "author": "John Doe",
+  "name": "Handheld Fan Control",
+  "author": "Ziperix",
   "flags": ["debug", "_root"],
   "api_version": 1,
   "publish": {
-    "tags": ["template", "root"],
+    "tags": [
+      "fan",
+      "fan-control",
+      "loud-fan",
+      "utils",
+      "utility",
+      "settings",
+      "root"
+    ],
     "description": "Decky example plugin.",
     "image": "https://opengraph.githubassets.com/1/SteamDeckHomebrew/PluginLoader"
   }

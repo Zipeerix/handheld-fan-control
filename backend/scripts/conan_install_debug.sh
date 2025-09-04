@@ -1,0 +1,2 @@
+export MACOSX_DEPLOYMENT_TARGET="$(sw_vers -productVersion)"
+conan install . --build=missing -s build_type=Debug -o handheld-fan-control*:skip_compiler_flags=True -o handheld-fan-control*:skip_static_analysis=True
