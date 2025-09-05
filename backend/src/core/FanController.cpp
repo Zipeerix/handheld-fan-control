@@ -65,4 +65,8 @@ void FanController::setTargetFanSpeed(const std::uint64_t temperature, const std
     const auto lock = std::scoped_lock(m_fan_settings_mutex);
     m_fan_settings.temperatures_to_speeds[temperature] = target_speed;
 }
+
+const std::unique_ptr<device::BaseDeviceInterface>& FanController::getDeviceInterface() const {
+    return m_device_interface;
+}
 }  // namespace hfc::core

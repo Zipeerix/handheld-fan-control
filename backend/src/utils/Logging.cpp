@@ -38,6 +38,9 @@ std::string convertStringToLowercase(std::string target) {
 static std::optional<LoggingSettings> g_shared_logging_settings = std::nullopt;
 
 void setLoggerSettings(const LoggingSettings& config) {
+    spdlog::flush_every(std::chrono::seconds(3));
+    spdlog::flush_on(spdlog::level::err);
+
     g_shared_logging_settings = config;
 }
 

@@ -22,6 +22,10 @@
 #include <string>
 
 namespace hfc::core::device {
+/*
+ * TODO: either read /sys files for fan speed, cpu temps etc etc maybe using Sysfspwm or std::ifstream file(hwmon_path +
+ * "/fan1_input"); or libudev or find a way to interact with lm_sensors
+ */
 class BaseDeviceInterface {
 public:
     virtual ~BaseDeviceInterface() = default;

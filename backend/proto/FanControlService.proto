@@ -33,8 +33,6 @@ message GetDeviceMetadataResponse {
   string device_name = 1;
   uint64 min_fan_speed = 2;
   uint64 max_fan_speed = 3;
-  bool is_supported = 4;
-  repeated string remarks = 5;
 }
 
 message GetCurrentFanSpeedRequest {

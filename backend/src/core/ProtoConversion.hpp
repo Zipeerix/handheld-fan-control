@@ -26,6 +26,7 @@ namespace hfc::core {
 using namespace hfc::fan_control_service_proto;
 
 GetCurrentFanSpeedResponse convertToProtoEquivalent(const FanSpeedData& fan_speed_data);
+GetDeviceMetadataResponse convertToProtoEquivalent(device::BaseDeviceInterface& device_interface);
 }  // namespace hfc::core
 
 #endif  // PROTOCONVERSION_HPP

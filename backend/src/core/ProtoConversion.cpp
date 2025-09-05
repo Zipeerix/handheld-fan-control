@@ -25,4 +25,13 @@ GetCurrentFanSpeedResponse convertToProtoEquivalent(const FanSpeedData& fan_spee
 
     return proto;
 }
+
+GetDeviceMetadataResponse convertToProtoEquivalent(device::BaseDeviceInterface& device_interface) {
+    GetDeviceMetadataResponse proto;
+    proto.set_device_name(device_interface.getDeviceName());
+    proto.set_min_fan_speed(device_interface.getMinimumFanSpeed());
+    proto.set_max_fan_speed(device_interface.getMaximumFanSpeed());
+
+    return proto;
+}
 }  // namespace hfc::core

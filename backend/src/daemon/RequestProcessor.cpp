@@ -40,9 +40,15 @@ GetPluginVersionResponse RequestProcessor::getPluginVersion(const GetPluginVersi
 }
 
 GetDeviceMetadataResponse RequestProcessor::getDeviceMetadata(const GetDeviceMetadataRequest& request) {
-    logRequest(request);
+    const auto request_id = logRequest(request);
 
-    throw std::runtime_error("Not implemented");
+    // TODO: Refactor?
+    const auto& device_interface = m_app_ctx.shared_fan_controller.getDeviceInterface();
+    const auto response = core::convertToProtoEquivalent(*device_interface);
+
+    logResponse(response, request_id);
+
+    return response;
 }
 
 GetCurrentFanSpeedResponse RequestProcessor::getCurrentFanSpeed(const GetCurrentFanSpeedRequest& request) {

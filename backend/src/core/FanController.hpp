@@ -40,6 +40,9 @@ public:
     FanSpeedData getCurrentFanSpeed();
     void setTargetFanSpeed(std::uint64_t temperature, std::uint64_t target_speed);
 
+    // TODO: Get rid of this if refactor in RequestProcessor
+    const std::unique_ptr<device::BaseDeviceInterface>& getDeviceInterface() const;
+
 private:
     utils::SharedLogger m_logger;
     GeneralSettings m_general_settings;
