@@ -30,6 +30,7 @@ class SteamDeckInterface final : public BaseDeviceInterface {
 public:
     SteamDeckInterface();
     ~SteamDeckInterface() override = default;
+
     std::string getDeviceName() const override;
 
     std::uint64_t getMinimumFanSpeed() override;
