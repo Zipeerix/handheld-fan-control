@@ -21,6 +21,7 @@
 #include <cstdint>
 #include <expected>
 #include <format>
+#include <map>
 #include <optional>
 #include <string>
 
@@ -33,7 +34,14 @@ struct LoggingSettings {
     std::string pattern;
 };
 
-struct FanSettings {};
+struct FanSettings {
+    // TODO: Add setting (in general) to use interpolation or just change RPM when temperature reaches next point
+    std::map<std::uint64_t, std::uint64_t> temperatures_to_speeds;
+
+    // TODO: Move this to diff class, this should just be simple struct
+    // TODO: When its a class, add adding/removing points methods
+    std::uint64_t getSpeedForTemperature(std::uint64_t temperature);
+};
 
 struct GeneralSettings {
     std::uint64_t temp_update_interval_ms;
@@ -82,7 +90,7 @@ struct std::formatter<hfc::FanSettings> {
     }
 
     static auto format(const hfc::FanSettings& obj, std::format_context& ctx) {
-        return std::format_to(ctx.out(), "[]");
+        return std::format_to(ctx.out(), "[temperatures_to_speeds={}]", obj.temperatures_to_speeds);
     }
 };
 

@@ -15,43 +15,27 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef FANCONTROLLER_HPP
-#define FANCONTROLLER_HPP
+#ifndef BASEDEVICEINTERFACE_HPP
+#define BASEDEVICEINTERFACE_HPP
 
-#include <thread>
+#include <memory>
+#include <string>
 
-#include "bin/ConfigParser.hpp"
-#include "device/BaseDeviceInterface.hpp"
-
-namespace hfc::core {
-struct FanSpeedData {
-    std::uint64_t current_speed;
-    std::uint64_t user_target_speed;
-};
-
-class FanController {
+namespace hfc::core::device {
+class BaseDeviceInterface {
 public:
-    FanController(GeneralSettings general_settings, FanSettings fan_settings);
-    ~FanController();
+    virtual ~BaseDeviceInterface() = default;
 
-    // TODO: Separate temperature monitor class? With callbacks to this clas or no?
-    void startMonitor();
+    virtual std::string getDeviceName() const = 0;
+    virtual std::uint64_t getMinimumFanSpeed() = 0;
+    virtual std::uint64_t getMaximumFanSpeed() = 0;
+    virtual std::uint64_t getCurrentTemperature() = 0;
+    virtual std::uint64_t getCurrentFanSpeed() = 0;
 
-    FanSpeedData getCurrentFanSpeed();
-    void setTargetFanSpeed(std::uint64_t temperature, std::uint64_t target_speed);
-
-private:
-    utils::SharedLogger m_logger;
-    GeneralSettings m_general_settings;
-
-    FanSettings m_fan_settings;
-    std::mutex m_fan_settings_mutex;
-
-    std::unique_ptr<device::BaseDeviceInterface> m_device_interface;
-
-    bool m_continue_monitoring = false;
-    std::unique_ptr<std::thread> m_monitor_thread;
+    virtual void setFanSpeed(std::uint64_t speed_rpm) = 0;
 };
-}  // namespace hfc::core
 
-#endif  // FANCONTROLLER_HPP
+std::unique_ptr<BaseDeviceInterface> getDeviceInterface();
+}  // namespace hfc::core::device
+
+#endif  // BASEDEVICEINTERFACE_HPP

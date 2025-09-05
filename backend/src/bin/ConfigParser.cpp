@@ -73,7 +73,29 @@ std::expected<FanSettings, std::string> parseFanConfig(const toml::table* config
         return std::unexpected("Missing fan configuration");
     }
 
-    return FanSettings{};
+    const auto config = *config_ptr;
+    FanSettings settings;
+
+    for (const auto& [key, value] : config) {
+        try {
+            const auto temperature = std::stoull(std::string(key));
+
+            auto speed_opt = value.value<std::uint64_t>();
+            if (!speed_opt.has_value()) {
+                return std::unexpected("Invalid speed value for temperature " + std::string(key));
+            }
+
+            settings.temperatures_to_speeds[temperature] = speed_opt.value();
+        } catch (const std::exception&) {
+            return std::unexpected("Invalid temperature value: " + std::string(key));
+        }
+    }
+
+    if (settings.temperatures_to_speeds.empty()) {
+        return std::unexpected("No temperature-to-speed mappings found in fan configuration");
+    }
+
+    return settings;
 }
 }  // namespace
 
@@ -101,5 +123,47 @@ std::expected<PluginSettings, std::string> parseConfigFile(std::string_view file
     return PluginSettings{.logging_settings = logging_config_parse_res.value(),
                           .general_settings = general_config_parse_res.value(),
                           .fan_settings = fan_config_parse_res.value()};
+}
+
+std::uint64_t FanSettings::getSpeedForTemperature(std::uint64_t temperature) {
+    auto it = temperatures_to_speeds.find(temperature);
+    if (it != temperatures_to_speeds.end()) {
+        return it->second;
+    }
+
+    std::uint64_t lower_temp = 0;
+    std::uint64_t upper_temp = std::numeric_limits<std::uint64_t>::max();
+    std::uint64_t lower_speed = 0;
+    std::uint64_t upper_speed = 0;
+    auto found_lower = false;
+    auto found_upper = false;
+
+    for (const auto& [temp, speed] : temperatures_to_speeds) {
+        if (temp <= temperature && temp > lower_temp) {
+            lower_temp = temp;
+            lower_speed = speed;
+            found_lower = true;
+        }
+        if (temp > temperature && temp < upper_temp) {
+            upper_temp = temp;
+            upper_speed = speed;
+            found_upper = true;
+        }
+    }
+
+    if (!found_lower && found_upper) {
+        return upper_speed;
+    }
+    if (found_lower && !found_upper) {
+        return lower_speed;
+    }
+    if (!found_lower && !found_upper) {
+        return 0;
+    }
+
+    const auto interpolatedSpeed =
+        lower_speed + (((upper_speed - lower_speed) * (temperature - lower_temp)) / (upper_temp - lower_temp));
+
+    return interpolatedSpeed;
 }
 }  // namespace hfc

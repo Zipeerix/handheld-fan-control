@@ -18,15 +18,51 @@
 #include "FanController.hpp"
 
 namespace hfc::core {
-FanController::FanController(const FanSettings fan_settings) :
-    m_fan_settings(std::move(fan_settings)) {
+FanController::FanController(GeneralSettings general_settings, FanSettings fan_settings) :
+    m_logger(utils::createLogger("FanController")),
+    m_general_settings(std::move(general_settings)),
+    m_fan_settings(std::move(fan_settings)),
+    m_device_interface(device::getDeviceInterface()) {
+    m_logger->info("Initialized device interface '{}': [min fan speed: {} RPM, max fan speed: {} RPM]",
+                   m_device_interface->getDeviceName(),
+                   m_device_interface->getMinimumFanSpeed(),
+                   m_device_interface->getMaximumFanSpeed());
+}
+
+FanController::~FanController() {
+    m_continue_monitoring = false;
+    if (m_monitor_thread != nullptr && m_monitor_thread->joinable()) {
+        m_logger->info("Stopping monitor thread");
+        m_monitor_thread->join();
+    }
+}
+
+void FanController::startMonitor() {
+    m_continue_monitoring = true;
+    m_logger->info("Starting monitor thread");
+    m_monitor_thread = std::make_unique<std::thread>([this]() {
+        while (m_continue_monitoring) {
+            const auto temp = m_device_interface->getCurrentTemperature();
+            {
+                const auto lock = std::scoped_lock(m_fan_settings_mutex);
+                m_logger->info(
+                    "Temperature: {}C, setting fan speed to: {}", temp, m_fan_settings.getSpeedForTemperature(temp));
+                std::this_thread::sleep_for(std::chrono::milliseconds(m_general_settings.temp_update_interval_ms));
+            }
+        }
+    });
 }
 
 FanSpeedData FanController::getCurrentFanSpeed() {
-    throw std::runtime_error("Not implemented");
+    const auto temp = m_device_interface->getCurrentTemperature();
+    const auto fan_speed_data = FanSpeedData{.current_speed = m_device_interface->getCurrentFanSpeed(),
+                                             .user_target_speed = m_fan_settings.getSpeedForTemperature(temp)};
+
+    return fan_speed_data;
 }
 
-void FanController::setTargetFanSpeed(std::uint64_t temperature, std::uint64_t target_speed) {
-    throw std::runtime_error("Not implemented");
+void FanController::setTargetFanSpeed(const std::uint64_t temperature, const std::uint64_t target_speed) {
+    const auto lock = std::scoped_lock(m_fan_settings_mutex);
+    m_fan_settings.temperatures_to_speeds[temperature] = target_speed;
 }
 }  // namespace hfc::core

@@ -15,43 +15,32 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef FANCONTROLLER_HPP
-#define FANCONTROLLER_HPP
+#ifndef MOCKDEVICEINTERFACE_HPP
+#define MOCKDEVICEINTERFACE_HPP
 
-#include <thread>
+#include "BaseDeviceInterface.hpp"
 
-#include "bin/ConfigParser.hpp"
-#include "device/BaseDeviceInterface.hpp"
+#include "utils/Logging.hpp"
 
-namespace hfc::core {
-struct FanSpeedData {
-    std::uint64_t current_speed;
-    std::uint64_t user_target_speed;
-};
-
-class FanController {
+namespace hfc::core::device {
+class MockDeviceInterface final : public BaseDeviceInterface {
 public:
-    FanController(GeneralSettings general_settings, FanSettings fan_settings);
-    ~FanController();
+    MockDeviceInterface();
+    ~MockDeviceInterface() override = default;
 
-    // TODO: Separate temperature monitor class? With callbacks to this clas or no?
-    void startMonitor();
+    std::string getDeviceName() const override;
 
-    FanSpeedData getCurrentFanSpeed();
-    void setTargetFanSpeed(std::uint64_t temperature, std::uint64_t target_speed);
+    std::uint64_t getMinimumFanSpeed() override;
+    std::uint64_t getMaximumFanSpeed() override;
+    std::uint64_t getCurrentTemperature() override;
+    std::uint64_t getCurrentFanSpeed() override;
+    void setFanSpeed(std::uint64_t speed_rpm) override;
 
 private:
     utils::SharedLogger m_logger;
-    GeneralSettings m_general_settings;
 
-    FanSettings m_fan_settings;
-    std::mutex m_fan_settings_mutex;
-
-    std::unique_ptr<device::BaseDeviceInterface> m_device_interface;
-
-    bool m_continue_monitoring = false;
-    std::unique_ptr<std::thread> m_monitor_thread;
+    std::uint64_t m_current_fan_speed = 0;
 };
-}  // namespace hfc::core
+}  // namespace hfc::core::device
 
-#endif  // FANCONTROLLER_HPP
+#endif  // MOCKDEVICEINTERFACE_HPP

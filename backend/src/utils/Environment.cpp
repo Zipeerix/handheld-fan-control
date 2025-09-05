@@ -48,6 +48,20 @@ std::expected<void, std::string> createDefaultConfigFileIfNotExists() {
             file << "[general]\n";
             file << "temp_update_interval_ms = 1000\n";
             file << "[fan]\n";
+            file << "\"10\" = 0\n";
+            file << "\"20\" = 0\n";
+            file << "\"30\" = 0\n";
+            file << "\"40\" = 0\n";
+            file << "\"50\" = 2000\n";
+            file << "\"60\" = 2000\n";
+            file << "\"65\" = 2000\n";
+            file << "\"70\" = 3000\n";
+            file << "\"75\" = 3500\n";
+            file << "\"80\" = 4000\n";
+            file << "\"85\" = 4500\n";
+            file << "\"90\" = 4500\n";
+            file << "\"95\" = 5000\n";
+            file << "\"100\" = 6500\n";
 
             file.close();
         } else {

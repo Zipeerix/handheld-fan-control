@@ -45,7 +45,8 @@ int main() {
     const auto logger = hfc::utils::createLogger("main");
     logger->info("Starting HandheldFanControl backend with settings: {}", plugin_settings);
 
-    auto fan_controller = hfc::core::FanController(plugin_settings.fan_settings);
+    auto fan_controller = hfc::core::FanController(plugin_settings.general_settings, plugin_settings.fan_settings);
+    fan_controller.startMonitor();
     const auto application_ctx = hfc::core::ApplicationCoreContext{.shared_fan_controller = fan_controller};
 
     const auto daemon = hfc::daemon::FanControlServiceServer(application_ctx);

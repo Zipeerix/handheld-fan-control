@@ -2,5 +2,19 @@
 minimum_log_level = "info"
 log_pattern = "[%Y-%m-%d %H:%M:%S.%e] [%n] [%^%l%$] %v"
 [general]
-temp_update_interval_ms = 1000
+temp_update_interval_ms = 2000
 [fan]
+"10" = 0
+"20" = 0
+"30" = 0
+"40" = 0
+"50" = 2000
+"60" = 2000
+"65" = 2000
+"70" = 3000
+"75" = 3500
+"80" = 4000
+"85" = 4500
+"90" = 4500
+"95" = 5000
+"100" = 6500

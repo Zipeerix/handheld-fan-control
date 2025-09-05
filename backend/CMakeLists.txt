@@ -25,6 +25,10 @@ set(APPLICATION_SOURCE_FILES
     src/daemon/DaemonServer.cpp
     src/daemon/DaemonServer.hpp
     src/bin/ConfigParser.cpp
+    src/core/device/BaseDeviceInterface.cpp
+    src/core/device/BaseDeviceInterface.hpp
+    src/core/device/MockDeviceInterface.cpp
+    src/core/device/MockDeviceInterface.hpp
     src/bin/ConfigParser.hpp
     src/utils/Logging.cpp
     src/utils/Time.cpp
