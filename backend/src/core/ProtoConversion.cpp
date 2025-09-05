@@ -15,18 +15,14 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#include "FanController.hpp"
+#include "ProtoConversion.hpp"
 
 namespace hfc::core {
-FanController::FanController(const FanSettings fan_settings) :
-    m_fan_settings(std::move(fan_settings)) {
-}
+GetCurrentFanSpeedResponse convertToProtoEquivalent(const FanSpeedData& fan_speed_data) {
+    GetCurrentFanSpeedResponse proto;
+    proto.set_current_fan_speed(fan_speed_data.current_speed);
+    proto.set_user_target_fan_speed(fan_speed_data.user_target_speed);
 
-FanSpeedData FanController::getCurrentFanSpeed() {
-    throw std::runtime_error("Not implemented");
-}
-
-void FanController::setTargetFanSpeed(std::uint64_t temperature, std::uint64_t target_speed) {
-    throw std::runtime_error("Not implemented");
+    return proto;
 }
 }  // namespace hfc::core

@@ -15,18 +15,22 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#include "FanController.hpp"
+#ifndef REQUESTIDGENERATOR_HPP
+#define REQUESTIDGENERATOR_HPP
 
-namespace hfc::core {
-FanController::FanController(const FanSettings fan_settings) :
-    m_fan_settings(std::move(fan_settings)) {
-}
+#include <cstdint>
 
-FanSpeedData FanController::getCurrentFanSpeed() {
-    throw std::runtime_error("Not implemented");
-}
+namespace hfc::daemon {
+using RequestID = std::uint64_t;
 
-void FanController::setTargetFanSpeed(std::uint64_t temperature, std::uint64_t target_speed) {
-    throw std::runtime_error("Not implemented");
-}
-}  // namespace hfc::core
+class RequestIDGenerator final {
+public:
+    RequestID next();
+
+private:
+    // No need for atomic, server is synchronous
+    RequestID m_last_id = 0;
+};
+}  // namespace hfc::daemon
+
+#endif  // REQUESTIDGENERATOR_HPP

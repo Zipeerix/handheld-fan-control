@@ -21,9 +21,17 @@
 #include "bin/ConfigParser.hpp"
 
 namespace hfc::core {
+struct FanSpeedData {
+    std::uint64_t current_speed;
+    std::uint64_t user_target_speed;
+};
+
 class FanController {
 public:
     explicit FanController(FanSettings fan_settings);
+
+    static FanSpeedData getCurrentFanSpeed();
+    static void setTargetFanSpeed(std::uint64_t temperature, std::uint64_t target_speed);
 
 private:
     FanSettings m_fan_settings;

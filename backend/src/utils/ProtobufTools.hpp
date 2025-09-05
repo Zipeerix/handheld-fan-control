@@ -42,10 +42,26 @@ enum class ProtoPayloadParseError {
     DeserializationFailed
 };
 
+struct ProtoMessageInfo {
+    std::string name;
+    std::string data;
+};
+
 template <typename SuccessType>
 using ProtobufToolResult = std::expected<SuccessType, Error<ProtoPayloadParseError> >;
 
 SerializedProtoPayload createProtoPayload(std::string_view type_name, std::string_view serialized_data);
+
+template <IsDerivedFromProtoMessage ProtoType>
+ProtoMessageInfo getProtoMessageInfo(const ProtoType& message) {
+    ProtoMessageInfo info;
+
+    const auto* descriptor = message.GetDescriptor();
+    info.name = descriptor != nullptr ? descriptor->full_name() : "<Unknown>";
+    info.data = message.DebugString();
+
+    return info;
+}
 
 template <IsDerivedFromProtoMessage ProtoType>
 SerializedProtoPayload makePayloadFromProto(const ProtoType& message) {

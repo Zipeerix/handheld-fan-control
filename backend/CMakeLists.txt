@@ -34,6 +34,10 @@ set(APPLICATION_SOURCE_FILES
     src/daemon/RequestProcessor.cpp
     src/daemon/RequestProcessor.hpp
     src/core/FanController.cpp
+    src/core/ProtoConversion.cpp
+    src/core/ProtoConversion.hpp
+    src/daemon/RequestIdGenerator.cpp
+    src/daemon/RequestIdGenerator.hpp
     src/core/FanController.hpp
     src/core/ApplicationCoreContext.hpp
     src/daemon/FanControlServiceServer.cpp

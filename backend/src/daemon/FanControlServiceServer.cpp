@@ -29,6 +29,17 @@ FanControlServiceServer::FanControlServiceServer(const core::ApplicationCoreCont
 
     m_daemon_server.registerHandler<GetPluginVersionRequest, GetPluginVersionResponse>(
         [this](const auto& request) { return m_request_processor.getPluginVersion(request); });
+
+    m_daemon_server.registerHandler<GetDeviceMetadataRequest, GetDeviceMetadataResponse>(
+        [this](const auto& request) { return m_request_processor.getDeviceMetadata(request); });
+
+    m_daemon_server.registerHandler<GetCurrentFanSpeedRequest, GetCurrentFanSpeedResponse>(
+        [this](const auto& request) { return m_request_processor.getCurrentFanSpeed(request); });
+
+    m_daemon_server.registerHandler<SetTargetFanSpeedRequest, google::protobuf::Empty>([this](const auto& request) {
+        m_request_processor.setTargetFanSpeed(request);
+        return google::protobuf::Empty();
+    });
 }
 
 void FanControlServiceServer::run() const {

@@ -17,6 +17,7 @@
 
 #include "RequestProcessor.hpp"
 
+#include "core/ProtoConversion.hpp"
 #include "meta/Metadata.hpp"
 
 namespace hfc::daemon {
@@ -25,10 +26,41 @@ RequestProcessor::RequestProcessor(const core::ApplicationCoreContext app_ctx) :
     m_app_ctx(app_ctx) {
 }
 
-GetPluginVersionResponse RequestProcessor::getPluginVersion([[maybe_unused]] const GetPluginVersionRequest& request) {
+// TODO: Generic handleRequest with templates, log there, and there route to specific handlers (via template overload)
+
+GetPluginVersionResponse RequestProcessor::getPluginVersion(const GetPluginVersionRequest& request) {
+    logRequest(request);
+
     GetPluginVersionResponse response;
     response.set_version(meta::getPluginVersion());
 
     return response;
+}
+
+GetDeviceMetadataResponse RequestProcessor::getDeviceMetadata(const GetDeviceMetadataRequest& request) {
+    logRequest(request);
+
+    throw std::runtime_error("Not implemented");
+}
+
+GetCurrentFanSpeedResponse RequestProcessor::getCurrentFanSpeed(const GetCurrentFanSpeedRequest& request) {
+    const auto request_id = logRequest(request);
+
+    const auto result = m_app_ctx.shared_fan_controller.getCurrentFanSpeed();
+    const auto response = core::convertToProtoEquivalent(result);
+
+    logResponse(response, request_id);
+
+    return response;
+}
+
+void RequestProcessor::setTargetFanSpeed(const SetTargetFanSpeedRequest& request) {
+    const auto request_id = logRequest(request);
+
+    const auto temperature = request.temperature_celsius();
+    const auto speed = request.target_fan_speed();
+    m_app_ctx.shared_fan_controller.setTargetFanSpeed(temperature, speed);
+
+    logResponse(google::protobuf::Empty(), request_id);
 }
 }  // namespace hfc::daemon
