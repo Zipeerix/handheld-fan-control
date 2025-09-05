@@ -13,7 +13,7 @@
       "settings",
       "root"
     ],
-    "description": "Decky example plugin.",
+    "description": "Fan control decky plugin for handheld PCs",
     "image": "https://opengraph.githubassets.com/1/SteamDeckHomebrew/PluginLoader"
   }
 }

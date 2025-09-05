@@ -15,17 +15,41 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#include "BaseDeviceInterface.hpp"
-
-#include "MockDeviceInterface.hpp"
 #include "SteamDeckInterface.hpp"
 
 namespace hfc::core::device {
-std::unique_ptr<BaseDeviceInterface> getDeviceInterface() {
-#ifdef HANDHELD_FAN_CONTROL_USE_MOCK_DEVICE_INTERFACE
-    return std::make_unique<MockDeviceInterface>();
-#else
-    return std::make_unique<SteamDeckInterface>();
-#endif
+namespace {
+// TODO: are they the same? I thought they are different
+constexpr auto k_steam_deck_lcd_max_fan_speed = 7'000;
+constexpr auto k_steam_deck_oled_max_fan_speed = 7'000;
+}  // namespace
+
+SteamDeckInterface::SteamDeckInterface() {
+    // TODO: detect sku properly
+    m_sku = SteamDeckSku::OLED;
+}
+
+std::string SteamDeckInterface::getDeviceName() const {
+    return m_sku == SteamDeckSku::OLED ? "Steam Deck (OLED)" : "Steam Deck (LCD)";
+}
+
+std::uint64_t SteamDeckInterface::getMinimumFanSpeed() {
+    return 0;
+}
+
+std::uint64_t SteamDeckInterface::getMaximumFanSpeed() {
+    return m_sku == SteamDeckSku::OLED ? k_steam_deck_oled_max_fan_speed : k_steam_deck_lcd_max_fan_speed;
+}
+
+std::uint64_t SteamDeckInterface::getCurrentTemperature() {
+    throw std::runtime_error("Not implemented");
+}
+
+std::uint64_t SteamDeckInterface::getCurrentFanSpeed() {
+    throw std::runtime_error("Not implemented");
+}
+
+void SteamDeckInterface::setFanSpeed(const std::uint64_t speed_rpm) {
+    throw std::runtime_error("Not implemented");
 }
 }  // namespace hfc::core::device

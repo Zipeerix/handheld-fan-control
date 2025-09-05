@@ -40,6 +40,7 @@ struct FanSettings {
 
     // TODO: Move this to diff class, this should just be simple struct
     // TODO: When its a class, add adding/removing points methods
+    // TODO: tests
     std::uint64_t getSpeedForTemperature(std::uint64_t temperature);
 };
 

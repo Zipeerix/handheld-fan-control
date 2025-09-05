@@ -15,17 +15,33 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
+#ifndef STEAMDECKINTERFACE_HPP
+#define STEAMDECKINTERFACE_HPP
+
 #include "BaseDeviceInterface.hpp"
 
-#include "MockDeviceInterface.hpp"
-#include "SteamDeckInterface.hpp"
-
 namespace hfc::core::device {
-std::unique_ptr<BaseDeviceInterface> getDeviceInterface() {
-#ifdef HANDHELD_FAN_CONTROL_USE_MOCK_DEVICE_INTERFACE
-    return std::make_unique<MockDeviceInterface>();
-#else
-    return std::make_unique<SteamDeckInterface>();
-#endif
-}
+enum class SteamDeckSku {
+    LCD,
+    OLED,
+};
+
+class SteamDeckInterface final : public BaseDeviceInterface {
+public:
+    SteamDeckInterface();
+    ~SteamDeckInterface() override = default;
+    std::string getDeviceName() const override;
+
+    std::uint64_t getMinimumFanSpeed() override;
+    std::uint64_t getMaximumFanSpeed() override;
+    std::uint64_t getCurrentTemperature() override;
+    std::uint64_t getCurrentFanSpeed() override;
+
+    void setFanSpeed(std::uint64_t speed_rpm) override;
+
+private:
+    SteamDeckSku m_sku;
+};
 }  // namespace hfc::core::device
+
+#endif  // STEAMDECKINTERFACE_HPP

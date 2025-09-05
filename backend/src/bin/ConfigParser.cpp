@@ -135,6 +135,7 @@ std::uint64_t FanSettings::getSpeedForTemperature(std::uint64_t temperature) {
     std::uint64_t upper_temp = std::numeric_limits<std::uint64_t>::max();
     std::uint64_t lower_speed = 0;
     std::uint64_t upper_speed = 0;
+
     auto found_lower = false;
     auto found_upper = false;
 
@@ -161,9 +162,9 @@ std::uint64_t FanSettings::getSpeedForTemperature(std::uint64_t temperature) {
         return 0;
     }
 
-    const auto interpolatedSpeed =
+    const auto actual_speed =
         lower_speed + (((upper_speed - lower_speed) * (temperature - lower_temp)) / (upper_temp - lower_temp));
 
-    return interpolatedSpeed;
+    return actual_speed;
 }
 }  // namespace hfc

@@ -5,4 +5,4 @@ echo "Container's IP address: `awk 'END{print $1}' /etc/hosts`"
 
 cd /backend
 
-make
+# TODO: Here do conan build . --build=missing & copy binary to /backend/out

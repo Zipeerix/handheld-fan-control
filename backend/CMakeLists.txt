@@ -29,6 +29,8 @@ set(APPLICATION_SOURCE_FILES
     src/core/device/BaseDeviceInterface.hpp
     src/core/device/MockDeviceInterface.cpp
     src/core/device/MockDeviceInterface.hpp
+    src/core/device/SteamDeckInterface.cpp
+    src/core/device/SteamDeckInterface.hpp
     src/bin/ConfigParser.hpp
     src/utils/Logging.cpp
     src/utils/Time.cpp
@@ -79,8 +81,10 @@ set_target_properties(
     PROPERTIES CXX_STANDARD 23
                CXX_STANDARD_REQUIRED YES
                CXX_EXTENSIONS OFF)
-target_compile_definitions(HandheldFanControlBackend
-                           PRIVATE -DHANDHELD_FAN_CONTROL_VERSION="${HANDHELD_FAN_CONTROL_VERSION}")
+target_compile_definitions(
+    HandheldFanControlBackend
+    PRIVATE HANDHELD_FAN_CONTROL_VERSION="${HANDHELD_FAN_CONTROL_VERSION}"
+            $<$<CONFIG:Debug>:HANDHELD_FAN_CONTROL_USE_MOCK_DEVICE_INTERFACE=1>)
 
 target_link_libraries(HandheldFanControlBackend PRIVATE ${COMMON_LIBS_TO_LINK})
 target_include_directories(HandheldFanControlBackend PRIVATE src)
