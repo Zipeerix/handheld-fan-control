@@ -30,6 +30,7 @@
 #include <boost/asio.hpp>
 
 #include "meta/Error.hpp"
+#include "utils/Logging.hpp"
 #include "utils/ProtobufTools.hpp"
 
 namespace hfc::daemon {
@@ -70,6 +71,8 @@ public:
 
 private:
     using GenericHandler = std::function<std::string(const utils::BaseProtoType&)>;
+
+    utils::SharedLogger m_logger;
 
     boost::asio::io_context m_io_context;
     std::unordered_map<std::string, GenericHandler> m_handlers;

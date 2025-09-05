@@ -26,6 +26,7 @@
 namespace hfc::utils {
 std::expected<void, std::string> prepareEnvironment();
 
+std::filesystem::path getRuntimePath();
 std::filesystem::path getLogFilePath();
 std::filesystem::path getSettingsFile(std::string_view preset);
 }  // namespace hfc::utils

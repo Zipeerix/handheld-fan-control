@@ -17,24 +17,34 @@
 
 #include "DaemonServer.hpp"
 
-namespace hfc::daemon {
-constexpr auto k_domain_socket_path = "/tmp/handheld_fan_control.sock";
+#include "utils/Environment.hpp"
 
-void prepareSocketFile() {
-    unlink(k_domain_socket_path);
+namespace hfc::daemon {
+namespace {
+constexpr auto k_unix_domain_socket_filename = "handheld_fan_control.sock";
 }
 
-DaemonServer::DaemonServer() {
-    m_server =
-        std::make_unique<UnixDomainServer>(m_io_context, k_domain_socket_path, [this](const ProtocolMessage& msg) {
-            // TODO: acceptMessage error handling should be exception?
-            const auto accept_result = acceptMessage(msg);
-            if (!accept_result.has_value()) {
-                throw std::runtime_error(std::format("Error while accepting message: {}", accept_result.error()));
-            }
+std::string getDomainSocketPath() {
+    return (utils::getRuntimePath() / k_unix_domain_socket_filename).string();
+}
 
-            return accept_result.value();
-        });
+void prepareSocketFile() {
+    unlink(getDomainSocketPath().c_str());
+}
+
+DaemonServer::DaemonServer() :
+    m_logger(utils::createLogger("DaemonServer")) {
+    const auto domain_socket_path = getDomainSocketPath();
+    m_logger->info("Starting daemon server on domain socket: {}", domain_socket_path);
+    m_server = std::make_unique<UnixDomainServer>(m_io_context, domain_socket_path, [this](const ProtocolMessage& msg) {
+        // TODO: acceptMessage error handling should be exception?
+        const auto accept_result = acceptMessage(msg);
+        if (!accept_result.has_value()) {
+            throw std::runtime_error(std::format("Error while accepting message: {}", accept_result.error()));
+        }
+
+        return accept_result.value();
+    });
 }
 
 DaemonServerResult<void> DaemonServer::start() const {

@@ -28,10 +28,12 @@ namespace hfc::utils {
 namespace {
 constexpr auto k_decky_prefix = "DECKY_PLUGIN";
 constexpr auto k_decky_log_dir_env_var = "LOG_DIR";
-constexpr auto k_decky_settings_env_var = "SETTINGS_DIR";
+constexpr auto k_decky_settings_dir_env_var = "SETTINGS_DIR";
+constexpr auto k_decky_runtime_dir_env_var = "RUNTIME_DIR";
 
 constexpr auto k_default_preset_name = "default";
 
+std::filesystem::path g_runtime_path;
 std::filesystem::path g_log_dir_path;
 std::filesystem::path g_settings_dir_path;
 
@@ -76,15 +78,19 @@ std::expected<void, std::string> createDefaultConfigFileIfNotExists() {
 
 std::expected<void, std::string> prepareEnvironment() {
     auto env = env::prefix(k_decky_prefix);
+    const auto runtime_dir_env_var_handle =
+        env.register_required_variable<std::filesystem::path>(k_decky_runtime_dir_env_var);
     const auto log_dir_env_var_handle = env.register_required_variable<std::filesystem::path>(k_decky_log_dir_env_var);
     const auto settings_dir_env_var_handle =
-        env.register_required_variable<std::filesystem::path>(k_decky_settings_env_var);
+        env.register_required_variable<std::filesystem::path>(k_decky_settings_dir_env_var);
 
     const auto parsed_and_validated_pre = env.parse_and_validate();
     if (!parsed_and_validated_pre.ok()) {
         return std::unexpected(parsed_and_validated_pre.error_message());
     }
 
+    const auto runtime_dir = parsed_and_validated_pre.get(runtime_dir_env_var_handle);
+    g_runtime_path = runtime_dir;
     const auto log_dir = parsed_and_validated_pre.get(log_dir_env_var_handle);
     g_log_dir_path = log_dir;
     const auto settings_dir = parsed_and_validated_pre.get(settings_dir_env_var_handle);
@@ -96,6 +102,10 @@ std::expected<void, std::string> prepareEnvironment() {
     }
 
     return {};
+}
+
+std::filesystem::path getRuntimePath() {
+    return g_runtime_path;
 }
 
 std::filesystem::path getLogFilePath() {
