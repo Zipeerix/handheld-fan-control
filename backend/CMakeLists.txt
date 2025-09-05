@@ -41,7 +41,11 @@ set(APPLICATION_SOURCE_FILES
     src/utils/ProtobufTools.cpp
     src/utils/ProtobufTools.hpp)
 
-set(TEST_FILES test/main.cpp)
+set(TEST_FILES
+    test/main.cpp
+    test/tests/meta/Metadata.Tests.cpp
+    test/tests/meta/Error.Tests.cpp
+    test/tests/utils/ProtobufTools.Tests.cpp)
 
 set(COMMON_LIBS_TO_LINK
     HandheldFanControlBackend_Proto
@@ -96,10 +100,18 @@ else()
              DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/test)
     endif()
 
+    protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS test/proto/ProtoForTests.proto)
+    add_library(HandheldFanControlBackend_InternalProtoForTests ${PROTO_SRCS} ${PROTO_HDRS})
+    target_link_libraries(HandheldFanControlBackend_InternalProtoForTests
+                          PRIVATE protobuf::protobuf)
+    target_include_directories(HandheldFanControlBackend_InternalProtoForTests
+                               PRIVATE ${Protobuf_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR})
+
     add_executable(HandheldFanControlBackend_Tests ${TEST_FILES} ${APPLICATION_SOURCE_FILES})
 
-    target_link_libraries(HandheldFanControlBackend_Tests PRIVATE ${TEST_LIBS_TO_LINK}
-                                                                  ${COMMON_LIBS_TO_LINK})
+    target_link_libraries(
+        HandheldFanControlBackend_Tests PRIVATE HandheldFanControlBackend_InternalProtoForTests
+                                                ${TEST_LIBS_TO_LINK} ${COMMON_LIBS_TO_LINK})
 
     set_target_properties(
         HandheldFanControlBackend_Tests

@@ -46,7 +46,7 @@ IndentWrappedFunctionNames: false
 IndentAccessModifiers: false
 IndentCaseLabels: true
 KeepEmptyLinesAtTheStartOfBlocks: false
-MacroBlockBegin: '^IPC_END_MESSAGE_MAP$'
+MacroBlockBegin: '^HFC_END_MESSAGE_MAP$'
 MacroBlockEnd: ''
 MaxEmptyLinesToKeep: 1
 NamespaceIndentation: None
