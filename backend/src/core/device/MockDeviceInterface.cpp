@@ -42,7 +42,7 @@ std::uint64_t MockDeviceInterface::getCurrentFanSpeed() {
     return m_current_fan_speed;
 }
 
-void MockDeviceInterface::setFanSpeed(std::uint64_t speed_rpm) {
+void MockDeviceInterface::setFanSpeed(const std::uint64_t speed_rpm) {
     m_current_fan_speed = speed_rpm;
 }
 }  // namespace hfc::core::device
