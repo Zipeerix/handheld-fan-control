@@ -43,6 +43,7 @@ enum class ProtoPayloadParseError {
 };
 
 struct ProtoMessageInfo {
+    std::string full_name;
     std::string name;
     std::string data;
 };
@@ -57,7 +58,8 @@ ProtoMessageInfo getProtoMessageInfo(const ProtoType& message) {
     ProtoMessageInfo info;
 
     const auto* descriptor = message.GetDescriptor();
-    info.name = descriptor != nullptr ? descriptor->full_name() : "<Unknown>";
+    info.full_name = descriptor != nullptr ? descriptor->full_name() : "<Unknown>";
+    info.name = descriptor != nullptr ? descriptor->name() : "<Unknown>";
     info.data = message.DebugString();
 
     return info;
