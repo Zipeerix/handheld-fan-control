@@ -21,6 +21,7 @@
 
 #include <toml++/toml.hpp>
 
+#include "utils/Environment.hpp"
 #include "utils/Logging.hpp"
 
 namespace hfc {
@@ -31,8 +32,6 @@ std::expected<LoggingSettings, std::string> parseLoggingConfig(const toml::table
     }
 
     const auto config = *config_ptr;
-
-    const auto file_output_path = config["file_output_path"].value<std::string>();
 
     const auto minimum_log_info = config["minimum_log_level"].value<std::string>();
     if (!minimum_log_info.has_value()) {
@@ -49,7 +48,7 @@ std::expected<LoggingSettings, std::string> parseLoggingConfig(const toml::table
         return std::unexpected("Missing pattern configuration in log configuration");
     }
 
-    return LoggingSettings{.file_output_path = file_output_path,
+    return LoggingSettings{.file_output_path = utils::getLogFilePath().string(),
                            .minimum_log_level = minimum_log_level.value(),
                            .pattern = pattern.value()};
 }
@@ -77,10 +76,6 @@ std::expected<FanSettings, std::string> parseFanConfig(const toml::table* config
     return FanSettings{};
 }
 }  // namespace
-
-bool LoggingSettings::isFileLoggingEnabled() const {
-    return file_output_path.has_value() && !file_output_path.value().empty();
-}
 
 std::expected<PluginSettings, std::string> parseConfigFile(std::string_view file_path) {
     const auto config_file = toml::parse_file(file_path);

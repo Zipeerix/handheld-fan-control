@@ -67,6 +67,7 @@ class HandheldFanControl(ConanFile):
         self.requires("boost/1.86.0")
         self.requires("spdlog/1.15.1")
         self.requires("tomlplusplus/3.4.0")
+        self.requires("libenvpp/1.5.0")
 
     def generate(self):
         tc = CMakeToolchain(self)

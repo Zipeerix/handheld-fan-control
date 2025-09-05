@@ -28,11 +28,9 @@
 
 namespace hfc {
 struct LoggingSettings {
-    std::optional<std::string> file_output_path;
+    std::string file_output_path;
     utils::LogLevel minimum_log_level;
     std::string pattern;
-
-    bool isFileLoggingEnabled() const;
 };
 
 struct FanSettings {};
@@ -60,7 +58,7 @@ struct std::formatter<hfc::LoggingSettings> {
     static auto format(const hfc::LoggingSettings& obj, std::format_context& ctx) {
         return std::format_to(ctx.out(),
                               "[file_output_path=\"{}\", log_level=\"{}\", pattern=\"{}\"]",
-                              obj.file_output_path.value_or("null"),
+                              obj.file_output_path,
                               hfc::utils::convertLogLevelToString(obj.minimum_log_level),
                               obj.pattern);
     }

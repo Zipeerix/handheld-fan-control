@@ -1,5 +1,4 @@
 [logging]
-file_output_path = ".tmp"
 minimum_log_level = "info"
 log_pattern = "[%Y-%m-%d %H:%M:%S.%e] [%n] [%^%l%$] %v"
 [general]

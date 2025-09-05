@@ -9,6 +9,7 @@ find_package(protobuf REQUIRED)
 find_package(Boost REQUIRED)
 find_package(tomlplusplus REQUIRED)
 find_package(spdlog REQUIRED)
+find_package(libenvpp REQUIRED)
 find_package(GTest REQUIRED)
 
 if(SKIP_STATIC_ANALYSIS)
@@ -38,6 +39,8 @@ set(APPLICATION_SOURCE_FILES
     src/core/ProtoConversion.hpp
     src/daemon/RequestIdGenerator.cpp
     src/daemon/RequestIdGenerator.hpp
+    src/utils/Environment.cpp
+    src/utils/Environment.hpp
     src/core/FanController.hpp
     src/core/ApplicationCoreContext.hpp
     src/daemon/FanControlServiceServer.cpp
@@ -55,6 +58,7 @@ set(COMMON_LIBS_TO_LINK
     HandheldFanControlBackend_Proto
     boost::boost
     spdlog::spdlog
+    libenvpp::libenvpp
     tomlplusplus::tomlplusplus
     protobuf::protobuf)
 set(TEST_LIBS_TO_LINK gtest::gtest)

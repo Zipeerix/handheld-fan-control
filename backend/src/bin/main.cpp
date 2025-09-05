@@ -20,36 +20,29 @@
 #include "core/ApplicationCoreContext.hpp"
 #include "core/FanController.hpp"
 #include "daemon/FanControlServiceServer.hpp"
+#include "utils/Environment.hpp"
 
-static std::expected<hfc::PluginSettings, int> parseCommandLineArguments(const int argc, const char** argv) {
-    const auto arguments = std::vector<std::string>(argv + 1, argv + argc);
-    if (arguments.size() != 1) {
-        std::cout << "usage: HandheldFanControlBackend <config-path>" << std::endl;
-        return std::unexpected(EXIT_FAILURE);
+int main() {
+    // TODO: autodelete logs every 24h, keep last 2 days
+    const auto env_prepare_result = hfc::utils::prepareEnvironment();
+    if (!env_prepare_result.has_value()) {
+        std::println("Error preparing environment: {}", env_prepare_result.error());
+        return EXIT_FAILURE;
     }
 
-    const std::string& config_path = arguments.at(0);
-    const auto parse_res = hfc::parseConfigFile(config_path);
-    if (!parse_res.has_value()) {
-        std::cout << parse_res.error() << std::endl;
-        return std::unexpected(EXIT_FAILURE);
+    const auto& config_path = hfc::utils::getSettingsFile("default").string();
+    const auto config_parse_result = hfc::parseConfigFile(config_path);
+    if (!config_parse_result.has_value()) {
+        std::println("Unable to parse config: {}", config_parse_result.error());
+        return EXIT_FAILURE;
     }
 
-    return parse_res.value();
-}
-
-int main(const int argc, const char** argv) {
-    const auto parse_result = parseCommandLineArguments(argc, argv);
-    if (!parse_result.has_value()) {
-        return parse_result.error();
-    }
-
-    const auto& plugin_settings = parse_result.value();
+    const auto& plugin_settings = config_parse_result.value();
 
     hfc::daemon::prepareSocketFile();
     hfc::utils::setLoggerSettings(plugin_settings.logging_settings);
 
-    hfc::utils::SharedLogger logger = hfc::utils::createLogger("main");
+    const auto logger = hfc::utils::createLogger("main");
     logger->info("Starting HandheldFanControl backend with settings: {}", plugin_settings);
 
     auto fan_controller = hfc::core::FanController(plugin_settings.fan_settings);

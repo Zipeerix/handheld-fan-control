@@ -17,12 +17,17 @@
 
 #include "Logging.hpp"
 
+#include <spdlog/sinks/rotating_file_sink.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/spdlog.h>
+
 #include "bin/ConfigParser.hpp"
-#include "spdlog/sinks/stdout_color_sinks.h"
-#include "spdlog/spdlog.h"
 
 namespace hfc::utils {
 namespace {
+constexpr auto k_max_single_log_file_size_bytes = 1 * 1'024 * 1'024 * 24;
+constexpr auto k_max_log_files_per_run = 7;
+
 std::string convertStringToLowercase(std::string target) {
     std::ranges::transform(target, target.begin(), [](const char c) { return std::tolower(c); });
 
@@ -109,11 +114,17 @@ SharedLogger createLogger(const std::string& name) {
 
     const auto min_log_level = convertLogLevelToSpdlogLevel(g_shared_logging_settings->minimum_log_level);
 
-    // TODO: Implement logging to file, important for plugging debugging on machine
     const auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
     console_sink->set_level(min_log_level);
     console_sink->set_pattern(g_shared_logging_settings->pattern);
     sinks.push_back(console_sink);
+
+    const auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
+        g_shared_logging_settings->file_output_path, k_max_single_log_file_size_bytes, k_max_log_files_per_run);
+
+    file_sink->set_level(min_log_level);
+    file_sink->set_pattern(g_shared_logging_settings->pattern);
+    sinks.push_back(file_sink);
 
     logger = std::make_shared<spdlog::logger>(name, sinks.begin(), sinks.end());
     logger->set_level(min_log_level);
