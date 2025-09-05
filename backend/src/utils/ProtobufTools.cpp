@@ -18,12 +18,14 @@
 #include "ProtobufTools.hpp"
 
 namespace hfc::utils {
+namespace {
+std::string shortenPayload(const SerializedProtoPayload& payload) {
+    return payload.size() > 128 ? payload.substr(0, 128) + "..." : payload;
+}
+}  // namespace
+
 SerializedProtoPayload createProtoPayload(const std::string_view type_name, const std::string_view serialized_data) {
     return std::format("{}:{}", type_name, serialized_data);
-}
-
-static std::string shortenPayload(const SerializedProtoPayload& payload) {
-    return payload.size() > 128 ? payload.substr(0, 128) + "..." : payload;
 }
 
 ProtobufToolResult<std::unique_ptr<BaseProtoType> > makeBaseProtoFromPayload(const SerializedProtoPayload& payload) {
