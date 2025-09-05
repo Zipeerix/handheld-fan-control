@@ -56,7 +56,7 @@ private:
     void logResponse(const RequestType& request, RequestID request_id) const {
         const auto message_info = utils::getProtoMessageInfo(request);
         m_logger->info(
-            "[tracking_id: {}] Received request: {} => [{}]", request_id, message_info.name, message_info.data);
+            "[tracking_id: {}] Sending response: {} => [{}]", request_id, message_info.name, message_info.data);
     }
 };
 }  // namespace hfc::daemon

@@ -29,10 +29,12 @@ RequestProcessor::RequestProcessor(const core::ApplicationCoreContext app_ctx) :
 // TODO: Generic handleRequest with templates, log there, and there route to specific handlers (via template overload)
 
 GetPluginVersionResponse RequestProcessor::getPluginVersion(const GetPluginVersionRequest& request) {
-    logRequest(request);
+    const auto request_id = logRequest(request);
 
     GetPluginVersionResponse response;
     response.set_version(meta::getPluginVersion());
+
+    logResponse(response, request_id);
 
     return response;
 }
