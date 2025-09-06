@@ -83,7 +83,7 @@ UnixDomainServerResult<ProtocolMessageBuffer> UnixDomainSession::readBody(const 
     const auto request = ProtocolMessage(message_buffer.begin(), message_buffer.begin() + bytes_read);
     const auto response = m_request_handler(request);
 
-    const auto response_length = static_cast<uint32_t>(response.length());
+    const auto response_length = static_cast<std::uint32_t>(response.length());
 
     ProtocolMessageBuffer response_message_buffer;
     response_message_buffer.resize(k_payload_length_header_size + response.length());
